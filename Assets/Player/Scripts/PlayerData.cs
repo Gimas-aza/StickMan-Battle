@@ -15,13 +15,14 @@ namespace Assets.Player
         public int CountKill => _countKill;
         public int CountMoney => _countMoney;
 
+        // TODO Перенести в отдельный класс
         public StatisticGameMenu StatisticGameMenu;
         public PlayerData OpponentPlayer;
         public Image HealthBarUI;
 
         public void IncreaseMaxHealth(int increase)
         {
-            if (Health + increase > Health)
+            if (increase > 0)
                 Health += increase;
         }
 

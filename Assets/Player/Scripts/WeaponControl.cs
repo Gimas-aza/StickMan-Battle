@@ -167,7 +167,5 @@ namespace Assets.Player
             Physics.Raycast(_aimingPoint.position, -beamDirection, out RaycastHit hit, _aimingDistance);
             return hit;
         }
-
-        
     }
 }

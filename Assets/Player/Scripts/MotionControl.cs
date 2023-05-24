@@ -1,12 +1,9 @@
 ﻿using UnityEngine;
-using UnityEngine.InputSystem;
-using Zenject;
 
 namespace Assets.Player
 {
     [RequireComponent(typeof(CharacterController))]
-    [RequireComponent(typeof(PlayerData))]
-    public class MotionControl : MonoBehaviour
+    public class MotionControl : MonoBehaviour, IControllable
     {
         [Header("Moveming")]
         [SerializeField] private float _speedMove;
@@ -16,77 +13,30 @@ namespace Assets.Player
         [SerializeField] private Animator _playerAnimator;
 
         private CharacterController _controller;
-        private PlayerData _playerData;
-        private InputSystem _inputSystem;
-        private InputAction _inputActionMovement;
-
-        private Vector3 _drivingDirections;
-        private Vector3 _drivingDirectionsSpeed;
-
-        private bool _isWalkLock = false;
-        private string _tagTwoPlayer = "Pl2";
-
-        private GameEventsServise _gameEvents;
-
-        [Inject]
-        private void Construct(GameEventsServise gameEvents)
-        {
-            _gameEvents = gameEvents;
-
-            _gameEvents.DisablePlayerMovement.AddListener(DisablePlayerMovement);
-        }
+        private Vector3 _drivingDirections = Vector3.zero;
 
         private void Awake()
         {
             _controller = GetComponent<CharacterController>();
-            _playerData = GetComponent<PlayerData>();
-            _inputSystem = new InputSystem();
-
-            Init();
         }
 
         private void FixedUpdate()
         {
-            Movement();
+            MoveInternal();
         }
 
-        private void Init()
+        public void SetDirectionMove(Vector3 direction)
         {
-            _inputSystem?.Enable();
-
-            _inputActionMovement = _inputSystem.PlayerOne.Move;
-
-            if (transform.CompareTag(_tagTwoPlayer))
-            {
-                _tagTwoPlayer = "Pl1";
-
-                _inputActionMovement = _inputSystem.PlayerTwo.Move;
-            }
+            _drivingDirections = direction;
         }
 
-        private void DisablePlayerMovement(bool isDisable)
+        private void MoveInternal()
         {
-            if (isDisable) 
-                _inputSystem?.Disable();
-            else
-                _inputSystem?.Enable();
-        }
+            Vector3 drivingDirectionsSpeed = Vector3.ClampMagnitude(_drivingDirections * _speedMove, _speedMove);
 
-        private void Movement()
-        {
-            _drivingDirections = ReadMovement();
-            _drivingDirectionsSpeed = Vector3.ClampMagnitude(_drivingDirections * _speedMove, _speedMove);
-
-            MoveAnimation(_drivingDirectionsSpeed);
-            RotateCharacter(_drivingDirectionsSpeed);
-            MoveCharacter(_drivingDirectionsSpeed);
-        }
-
-        private Vector3 ReadMovement()
-        {
-            Vector2 direction = _inputActionMovement.ReadValue<Vector2>();
-
-            return new Vector3(direction.y, 0.0f, -direction.x);
+            MoveAnimation(drivingDirectionsSpeed);
+            RotateCharacter(drivingDirectionsSpeed);
+            MoveCharacter(drivingDirectionsSpeed);
         }
 
         private void MoveCharacter(Vector3 moveDirection)
@@ -95,9 +45,7 @@ namespace Assets.Player
         }
 
         private void RotateCharacter(Vector3 moveDirection)
-        {
-            GameObject playerModel = _playerAnimator.gameObject;
-            
+        {            
             if (Vector3.Angle(transform.forward, -moveDirection) > 0)
             {                
                 Vector3 newDirection = Vector3.RotateTowards(transform.forward, -moveDirection, _speedRotate, 0.0f);
@@ -107,7 +55,7 @@ namespace Assets.Player
 
         private void MoveAnimation(Vector3 moveDirection)
         {
-            if (moveDirection != Vector3.zero && !_isWalkLock)
+            if (moveDirection != Vector3.zero)
                 _playerAnimator.SetBool("Run", true);
             else
                 _playerAnimator.SetBool("Run", false);
