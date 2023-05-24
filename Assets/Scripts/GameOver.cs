@@ -1,3 +1,4 @@
+using System;
 using Assets.Player;
 using TMPro;
 using UnityEngine;
@@ -14,20 +15,25 @@ namespace Assets
         {
             _gameEvents = gameEvents;
 
-            _gameEvents.UpdateStatisticGame.AddListener(UpdateStatisticPlayer);
+            _gameEvents.GameOverMenu.AddListener(ShowMenu);
+            _gameEvents.UpdateStatisticGame.AddListener(UpdateStatisticUI);
         }
 
-        public void RestartGame() 
+        private void ShowMenu()
         {
-            
+            gameObject.SetActive(true);
         }
 
-        public void UpdateStatisticPlayer(PlayerData playerData, int money)
+        private void RestartGame() 
         {
-            int countKill = playerData.CountKill + 1;
+            // todo дописать
+        }
 
+        private void UpdateStatisticUI(PlayerData playerData, int money)
+        {
             playerData.UpdateStatistic(money);
 
+            int countKill = playerData.CountKill;
             playerData.StatisticGameMenu.Render(countKill, money);
         }
     }

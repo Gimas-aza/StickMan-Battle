@@ -18,11 +18,11 @@ namespace Assets.Player
         public StatisticGameMenu StatisticGameMenu;
         public PlayerData OpponentPlayer;
         public Image HealthBarUI;
-        public Image JerkBarUI;
 
         public void IncreaseMaxHealth(int increase)
         {
-            Health += increase;
+            if (Health + increase > Health)
+                Health += increase;
         }
 
         public void WithdrawMoney(int price)
