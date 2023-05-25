@@ -1,18 +1,24 @@
 using UnityEngine;
+using UnityEngine.Events;
 using Zenject;
 
 namespace Assets.Player
 {
+    [RequireComponent(typeof(PlayerData))]
+    [RequireComponent(typeof(PlayerUI))]
     public class PlayerLogic : MonoBehaviour
     {
         [SerializeField] private float _currentPlayerHealth;
+        [SerializeField] private PlayerLogic _opponentPlayerLogic;
+        [SerializeField] private GameOver _gameOver;
 
-        private PlayerData _currentPlayerData;
+        private PlayerData _playerData;
+        private PlayerUI _playerUI;
         private int _countKill;
         private int _countMoney;
-        private int _moneyMultiplier = 1;
-        private PlayerData _lastPlayerKilled;
         private GameEventsServise _gameEvents;
+
+        public UnityAction Death;
 
         [Inject]
         private void Construct(GameEventsServise gameEvents)
@@ -24,11 +30,25 @@ namespace Assets.Player
 
         private void Awake()
         {
-            _currentPlayerData = GetComponent<PlayerData>();
+            _playerData = GetComponent<PlayerData>();
+            _playerUI = GetComponent<PlayerUI>();
+        }
+
+        void OnEnable()
+        {
+            Death += IncreaseCashBalance;
+            Death += UpdateStatistic;
+        }
+
+        void OnDisable()
+        {
+            Death -= IncreaseCashBalance;
+            Death -= UpdateStatistic;
         }
 
         private void Start()
         {
+            SetHealthToMaximum();
             InitializePlayerData();
         }
 
@@ -38,54 +58,43 @@ namespace Assets.Player
             {
                 _currentPlayerHealth = 0;
 
-                IncreaseCashBalance(_currentPlayerData.OpponentPlayer);
+                _opponentPlayerLogic.Death?.Invoke();
 
                 _gameEvents.DisablePlayerMovement.Invoke(true);
-
-                WriteInStatisticKill();
                 _gameEvents.GameOverMenu.Invoke();
             }
             else
                 _currentPlayerHealth -= damage;
 
-            _gameEvents.UpdateHealthBar.Invoke(_currentPlayerData, _currentPlayerHealth);
-        }
-
-        private void InitializePlayerData()
-        {
-            SetHealthToMaximum();
-
-            _countKill = _currentPlayerData.OpponentPlayer.CountKill;
-            _countMoney = _currentPlayerData.OpponentPlayer.CountMoney;
-
-            _currentPlayerData.OpponentPlayer.StatisticGameMenu.Render(_countKill, _countMoney);
+            _playerUI.UpdateHealthBar(_currentPlayerHealth, _playerData.Health);
         }
 
         private void SetHealthToMaximum()
         {
-            _currentPlayerHealth = _currentPlayerData.Health;
+            _currentPlayerHealth = _playerData.Health;
         }
 
-        private void IncreaseCashBalance(PlayerData playerData)
+        private void InitializePlayerData()
         {
-            SetCashMultiplier(playerData);
+            _countKill = _playerData.CountKill;
+            _countMoney = _playerData.CountMoney;
 
-            _countMoney += _moneyMultiplier * 5;
+            _playerUI.RenderStatisticMenu(_countKill, _countMoney);
         }
 
-        private void SetCashMultiplier(PlayerData playerData)
+        private void IncreaseCashBalance()
         {
-            if (playerData != _lastPlayerKilled && _moneyMultiplier > 0)
-            {
-                _moneyMultiplier = 0;
-                _lastPlayerKilled = playerData;
-            }
-            _moneyMultiplier++;
+            int moneyMultiplier = _gameOver.GetMoneyMultiplier(_playerData);
+
+            _countMoney += moneyMultiplier * 5;
         }
 
-        private void WriteInStatisticKill()
+        private void UpdateStatistic()
         {
-            _gameEvents.UpdateStatisticGame.Invoke(_currentPlayerData.OpponentPlayer, _countMoney);
+            _playerData.UpdateStatistic(_countMoney);
+            _countKill = _playerData.CountKill;
+
+            _playerUI.RenderStatisticMenu(_countKill, _countMoney);
         }
     }
 }

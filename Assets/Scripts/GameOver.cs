@@ -8,6 +8,8 @@ namespace Assets
 {    
     public class GameOver : MonoBehaviour
     {        
+        private PlayerData _pastPlayerSurvivor;
+        private int _moneyMultiplier = 1;
         private GameEventsServise _gameEvents;
 
         [Inject]
@@ -16,7 +18,16 @@ namespace Assets
             _gameEvents = gameEvents;
 
             _gameEvents.GameOverMenu.AddListener(ShowMenu);
-            _gameEvents.UpdateStatisticGame.AddListener(UpdateStatisticUI);
+        }
+
+        public int GetMoneyMultiplier(PlayerData playerData)
+        {
+            if (playerData != _pastPlayerSurvivor && _moneyMultiplier > 0)
+            {
+                _moneyMultiplier = 0;
+                _pastPlayerSurvivor = playerData;
+            }
+            return ++_moneyMultiplier;
         }
 
         private void ShowMenu()
@@ -27,14 +38,6 @@ namespace Assets
         private void RestartGame() 
         {
             // todo дописать
-        }
-
-        private void UpdateStatisticUI(PlayerData playerData, int money)
-        {
-            playerData.UpdateStatistic(money);
-
-            int countKill = playerData.CountKill;
-            playerData.StatisticGameMenu.Render(countKill, money);
         }
     }
 }

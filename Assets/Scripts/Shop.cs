@@ -11,6 +11,7 @@ namespace Assets
         [SerializeField] private List<Item> _itemList;
         [SerializeField] private PlayerData _playerData;
         [SerializeField] private ItemView _template;
+        [SerializeField] private bool _inverseItems = false;
         [SerializeField] private GameObject _itemContainer;
         [SerializeField] private float _marginTopForItems;
 
@@ -34,7 +35,7 @@ namespace Assets
             view.SellButtonClick += OnSellButtonClick;
             Vector3 changePosition = GetChangePositionItemView(view, index);
 
-            view.Render(item);
+            view.Render(item, _inverseItems);
             view.SetLocationItemView(changePosition);
         }
 

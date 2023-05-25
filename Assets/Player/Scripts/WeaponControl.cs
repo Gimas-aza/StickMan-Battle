@@ -24,7 +24,6 @@ namespace Assets.Player
         [Space(10)]
         [SerializeField] private Weapon[] _weaponSlots;
 
-        private Rigidbody _rigidbody;
         private int _previousSlotIndex = -1;
         private float _rateOfFireWeapon;
         private float _damageWeapon;
@@ -49,7 +48,6 @@ namespace Assets.Player
 
         private void Awake()
         {
-            _rigidbody = GetComponent<Rigidbody>();
             _playerData = GetComponent<PlayerData>();
             _tagCurrentPlayer = transform.tag;
             _inputSystem = new InputSystem();
@@ -158,7 +156,7 @@ namespace Assets.Player
                 beamHit = LaunchBeam(beamDirection);
 
                 if (beamHit.point != Vector3.zero && beamHit.transform.CompareTag(_tagTwoPlayer))
-                    _rigidbody.MoveRotation((Quaternion.LookRotation(beamDirection)));
+                    transform.rotation = Quaternion.LookRotation(beamDirection);
             }
         }
 

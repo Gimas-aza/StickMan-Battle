@@ -29,13 +29,19 @@ namespace Assets.UI
             _rectTransform = GetComponent<RectTransform>();
         }
 
-        public void Render(Item item)
+        public void Render(Item item, bool inverse = false)
         {
             _item = item;
 
             _label.text = item.Label;
             _price.text = _wordBeforePrice + item.Price;
             _icon.sprite = item.Icon;
+
+            if (inverse)
+            {
+                _label.gameObject.transform.localRotation = Quaternion.Euler(0, 180, 0);
+                _price.gameObject.transform.localRotation = Quaternion.Euler(0, 180, 0);
+            }
         }
 
         public void OnButtonClick()

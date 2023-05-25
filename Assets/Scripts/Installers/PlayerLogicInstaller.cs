@@ -4,7 +4,7 @@ using Zenject;
 
 namespace Assets.Installer
 {
-    public class PlayerInstaller : MonoInstaller
+    public class PlayerLogicInstaller : MonoInstaller
     {
         [SerializeField] private PlayerLogic _playerOne;
         [SerializeField] private PlayerLogic _playerTwo;

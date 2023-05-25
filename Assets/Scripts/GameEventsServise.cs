@@ -15,6 +15,5 @@ namespace Assets
         [HideInInspector] public UnityEvent<bool> DisablePlayerMovement = new();
         [HideInInspector] public UnityEvent<PlayerData, float> BulletHits = new();
         [HideInInspector] public UnityEvent<PlayerData, float> UpdateHealthBar = new();
-        [HideInInspector] public UnityEvent<PlayerData, int> UpdateStatisticGame = new();
     }
 }

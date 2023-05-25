@@ -7,23 +7,20 @@ namespace Assets.Player
 {
     public class PlayerData : MonoBehaviour
     {
+        [SerializeField] private float _health;
+        [SerializeField] private float _spawn;
         [SerializeField] private int _countKill;
         [SerializeField] private int _countMoney;
 
-        public float Health { get; private set; }
-        public float Spawn { get; private set; }
+        public float Health => _health;
+        public float Spawn => _spawn;
         public int CountKill => _countKill;
         public int CountMoney => _countMoney;
-
-        // TODO Перенести в отдельный класс
-        public StatisticGameMenu StatisticGameMenu;
-        public PlayerData OpponentPlayer;
-        public Image HealthBarUI;
 
         public void IncreaseMaxHealth(int increase)
         {
             if (increase > 0)
-                Health += increase;
+                _health += increase;
         }
 
         public void WithdrawMoney(int price)
