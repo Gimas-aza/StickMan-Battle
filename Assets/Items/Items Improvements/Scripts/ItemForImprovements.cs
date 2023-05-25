@@ -18,7 +18,7 @@ namespace Assets.Items
 
         public override void GiveItemPlayer(PlayerData player)
         {
-            player.WithdrawMoney(_effect);
+            player.IncreaseMaxHealth(_effect);
         }
     }
 }

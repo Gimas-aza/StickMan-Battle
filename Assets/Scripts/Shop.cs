@@ -53,7 +53,7 @@ namespace Assets
                 item.GiveItemPlayer(_playerData);
 
                 view.SellButtonClick -= OnSellButtonClick;
-                view.SellButtonClick += OnGiveItemButtonClick;
+                // view.SellButtonClick += OnGiveItemButtonClick;
             }
         }
 

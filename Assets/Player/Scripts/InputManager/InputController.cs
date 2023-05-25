@@ -11,6 +11,7 @@ namespace Assets.Player
         private IControllable _controllable;
         private InputAction _inputActionMovement;
         private string _tagTwoPlayer = "Pl2";
+        private CharacterController _characterController;
         private GameEventsServise _gameEvents;
 
         [Inject]
@@ -28,7 +29,8 @@ namespace Assets.Player
                 _controllable = controllable;
             else
                 throw new Exception("Не найден IControllable");
-                
+              
+            _characterController = GetComponent<CharacterController>();
             Init();
         }
 
@@ -55,6 +57,8 @@ namespace Assets.Player
                 _inputSystem?.Disable();
             else
                 _inputSystem?.Enable();
+
+            _characterController.enabled = !isDisable;
         }
 
         private void ReadMove()

@@ -72,6 +72,7 @@ namespace Assets.Player
         private void SetHealthToMaximum()
         {
             _currentPlayerHealth = _playerData.Health;
+            _playerUI.UpdateHealthBar(_currentPlayerHealth, _playerData.Health);
         }
 
         private void InitializePlayerData()

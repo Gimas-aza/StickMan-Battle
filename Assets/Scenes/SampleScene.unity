@@ -454,7 +454,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 761899465}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
@@ -5865,7 +5865,7 @@ MonoBehaviour:
   _health: 200
   _spawn: 27.56
   _countKill: 0
-  _countMoney: 0
+  _countMoney: 30
 --- !u!114 &151675359
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6488,12 +6488,6 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   DisablePlayerMovement:
-    m_PersistentCalls:
-      m_Calls: []
-  BulletHits:
-    m_PersistentCalls:
-      m_Calls: []
-  UpdateHealthBar:
     m_PersistentCalls:
       m_Calls: []
 --- !u!1 &311616777
@@ -22070,7 +22064,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 428407977}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
@@ -22623,7 +22617,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1049732663}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
@@ -29377,7 +29371,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1397679015
 RectTransform:
   m_ObjectHideFlags: 0
@@ -30514,7 +30508,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 475661120}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}

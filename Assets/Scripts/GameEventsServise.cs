@@ -13,7 +13,5 @@ namespace Assets
         [HideInInspector] public UnityEvent GameOverMenu = new();
         [HideInInspector] public UnityEvent HealthToMaximum = new();
         [HideInInspector] public UnityEvent<bool> DisablePlayerMovement = new();
-        [HideInInspector] public UnityEvent<PlayerData, float> BulletHits = new();
-        [HideInInspector] public UnityEvent<PlayerData, float> UpdateHealthBar = new();
     }
 }

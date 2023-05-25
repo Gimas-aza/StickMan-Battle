@@ -22,21 +22,18 @@ namespace Assets
 
         private void ResetPosition()
         {
-            CharacterController playerOneController = _playerOneData.GetComponent<CharacterController>();
-            CharacterController playerTwoController = _playerOneData.GetComponent<CharacterController>();          
-
-            playerOneController.Move(new Vector3(0, 0, _playerOneData.Spawn));
-            playerOneController.Move(new Vector3(0, 0, _playerTwoData.Spawn));
-            playerOneController.transform.eulerAngles = new Vector3(0, 0, 0);
-            playerTwoController.transform.eulerAngles = new Vector3(0, 180, 0);
+            Transform playerOneTransform = _playerOneData.gameObject.transform;
+            Transform playerTwoTransform = _playerTwoData.gameObject.transform;
+            
+            playerOneTransform.position = new Vector3(0, 0, _playerOneData.Spawn);
+            playerTwoTransform.position = new Vector3(0, 0, _playerTwoData.Spawn);
+            playerOneTransform.eulerAngles = new Vector3(0, 0, 0);
+            playerTwoTransform.eulerAngles = new Vector3(0, 180, 0);
         }
 
         private void ResetHealth()
         {
             _gameEvents.HealthToMaximum?.Invoke();
-
-            // _gameEvents.UpdateHealthBar.Invoke(_playerOneData, _playerOneData.Health);
-            // _gameEvents.UpdateHealthBar.Invoke(_playerTwoData, _playerTwoData.Health);
         }
     }
 }
