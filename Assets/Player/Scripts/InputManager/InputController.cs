@@ -12,14 +12,14 @@ namespace Assets.Player
         private InputAction _inputActionMovement;
         private string _tagTwoPlayer = "Pl2";
         private CharacterController _characterController;
-        private GameEventsServise _gameEvents;
+        private GlobalEventsSystem _gameEvents;
 
         [Inject]
-        private void Construct(GameEventsServise gameEvents)
+        private void Construct(GlobalEventsSystem gameEvents)
         {
             _gameEvents = gameEvents;
 
-            _gameEvents.DisablePlayerMovement.AddListener(OnDisablePlayerMovement);
+            _gameEvents.onDisablePlayerMovement.AddListener(DisableMovement);
         }
 
         public void Awake()
@@ -51,7 +51,7 @@ namespace Assets.Player
             }
         }
 
-        private void OnDisablePlayerMovement(bool isDisable)
+        private void DisableMovement(bool isDisable)
         {
             if (isDisable) 
                 _inputSystem?.Disable();

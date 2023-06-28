@@ -16,16 +16,16 @@ namespace Assets.Player
         private PlayerUI _playerUI;
         private int _countKill;
         private int _countMoney;
-        private GameEventsServise _gameEvents;
+        private GlobalEventsSystem _gameEvents;
 
-        public UnityAction Death;
+        public UnityAction onDeath;
 
         [Inject]
-        private void Construct(GameEventsServise gameEvents)
+        private void Construct(GlobalEventsSystem gameEvents)
         {
             _gameEvents = gameEvents;
 
-            _gameEvents.HealthToMaximum.AddListener(SetHealthToMaximum);
+            _gameEvents.onHealthToMaximum.AddListener(SetHealthToMaximum);
         }
 
         private void Awake()
@@ -36,14 +36,14 @@ namespace Assets.Player
 
         void OnEnable()
         {
-            Death += IncreaseCashBalance;
-            Death += UpdateStatistic;
+            onDeath += IncreaseCashBalance;
+            onDeath += UpdateStatistic;
         }
 
         void OnDisable()
         {
-            Death -= IncreaseCashBalance;
-            Death -= UpdateStatistic;
+            onDeath -= IncreaseCashBalance;
+            onDeath -= UpdateStatistic;
         }
 
         private void Start()
@@ -58,10 +58,10 @@ namespace Assets.Player
             {
                 _currentPlayerHealth = 0;
 
-                _opponentPlayerLogic.Death?.Invoke();
+                _opponentPlayerLogic.onDeath?.Invoke();
 
-                _gameEvents.DisablePlayerMovement.Invoke(true);
-                _gameEvents.GameOverMenu.Invoke();
+                _gameEvents.onDisablePlayerMovement?.Invoke(true);
+                _gameEvents.onGameOverMenu?.Invoke();
             }
             else
                 _currentPlayerHealth -= damage;

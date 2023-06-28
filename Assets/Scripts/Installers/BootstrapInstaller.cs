@@ -6,17 +6,17 @@ namespace Assets.Installer
 {
     public class BootstrapInstaller : MonoInstaller
     {
-        [SerializeField] private GameEventsServise _gameEvents;
+        [SerializeField] private GlobalEventsSystem _gameEvents;
 
         public override void InstallBindings()
         {
-            BindGameEvents();
+            BindGlobalEvents();
         }
 
-        private void BindGameEvents()
+        private void BindGlobalEvents()
         {
             Container
-                .Bind<GameEventsServise>()
+                .Bind<GlobalEventsSystem>()
                 .FromComponentInNewPrefab(_gameEvents)
                 .AsSingle();
         }

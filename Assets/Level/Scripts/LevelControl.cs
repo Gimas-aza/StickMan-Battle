@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Assets.Player;
+using UnityEngine;
 using Zenject;
 
 namespace Assets.Level
@@ -6,29 +7,28 @@ namespace Assets.Level
     public class LevelControl : MonoBehaviour
     {
         [SerializeField] private Cell _prefabCell;
+        [SerializeField] private PlayerData[] _playersData;
 
         private Cell[,] _createdСells = new Cell[4, 9];
         private Cell _cell;
         private int _levelNumber = 1;
-        private GameEventsServise _gameEvents;
+        private GlobalEventsSystem _gameEvents;
        
         [Inject]
-        private void Construct(GameEventsServise gameEvents)
+        private void Construct(GlobalEventsSystem gameEvents)
         {
             _gameEvents = gameEvents;
         }
 
         void Start()
         {
-            SpawnLevel();
+            SwitchLevel();
         }
         
         public void SwitchLevel()
         {
             SpawnLevel();
-            _gameEvents.DisablePlayerMovement.Invoke(true);
-            _gameEvents.RestartLevel.Invoke();
-            _gameEvents.DisablePlayerMovement.Invoke(false);
+            ReSpawnPlayers();
         }
 
         private void SpawnLevel()
@@ -56,6 +56,25 @@ namespace Assets.Level
                 }
             }
             _levelNumber++;
+        }
+
+        private void ReSpawnPlayers()
+        {
+            _gameEvents.onDisablePlayerMovement?.Invoke(true);
+            ResetPosition();
+            _gameEvents.onDisablePlayerMovement?.Invoke(false);
+            _gameEvents.onHealthToMaximum?.Invoke();
+        }
+
+        private void ResetPosition()
+        {
+            foreach (PlayerData player in _playersData)
+            {                
+                Transform playerTransform = player.gameObject.transform;
+
+                playerTransform.position = player.Spawn;
+                playerTransform.eulerAngles = new Vector3(0, player.RotationY, 0);
+            }
         }
     }
 }

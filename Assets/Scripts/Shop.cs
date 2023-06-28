@@ -32,14 +32,14 @@ namespace Assets
         private void AddItem(Item item, int index)
         {
             var view = Instantiate(_template, _itemContainer.transform);
-            view.SellButtonClick += OnSellButtonClick;
+            view.onSellButtonClick += SellButtonClick;
             Vector3 changePosition = GetChangePositionItemView(view, index);
 
             view.Render(item, _inverseItems);
             view.SetLocationItemView(changePosition);
         }
 
-        private void OnSellButtonClick(Item item, ItemView view)
+        private void SellButtonClick(Item item, ItemView view)
         {
             TrySellItem(item, view);
         }
@@ -52,19 +52,8 @@ namespace Assets
                 view.SetSuccessOfPurchase();
                 item.GiveItemPlayer(_playerData);
 
-                view.SellButtonClick -= OnSellButtonClick;
-                // view.SellButtonClick += OnGiveItemButtonClick;
+                view.onSellButtonClick -= SellButtonClick;
             }
-        }
-
-        private void OnGiveItemButtonClick(Item item, ItemView view) 
-        {
-            GiveItem(item);
-        }
-
-        private void GiveItem(Item item) 
-        {
-            item.GiveItemPlayer(_playerData);
         }
 
         private Vector3 GetChangePositionItemView(ItemView view, int index)

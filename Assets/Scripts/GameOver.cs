@@ -10,14 +10,14 @@ namespace Assets
     {        
         private PlayerData _pastPlayerSurvivor;
         private int _moneyMultiplier = 1;
-        private GameEventsServise _gameEvents;
+        private GlobalEventsSystem _gameEvents;
 
         [Inject]
-        private void Construct(GameEventsServise gameEvents)
+        private void Construct(GlobalEventsSystem gameEvents)
         {
             _gameEvents = gameEvents;
 
-            _gameEvents.GameOverMenu.AddListener(ShowMenu);
+            _gameEvents.onGameOverMenu.AddListener(ShowMenu);
         }
 
         public int GetMoneyMultiplier(PlayerData playerData)
@@ -27,17 +27,13 @@ namespace Assets
                 _moneyMultiplier = 0;
                 _pastPlayerSurvivor = playerData;
             }
+
             return ++_moneyMultiplier;
         }
 
         private void ShowMenu()
         {
             gameObject.SetActive(true);
-        }
-
-        private void RestartGame() 
-        {
-            // todo дописать
         }
     }
 }

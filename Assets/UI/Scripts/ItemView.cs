@@ -16,13 +16,12 @@ namespace Assets.UI
         private Item _item;
         private readonly string _wordBeforePrice = "Стоимость: ";
         private bool _isBuyItem = false;
-        private GameEventsServise _gameEvents;
         private RectTransform _rectTransform;
 
         public bool IsBuyItem => _isBuyItem;
         public RectTransform RectTransform => _rectTransform;
 
-        public UnityAction<Item, ItemView> SellButtonClick;
+        public UnityAction<Item, ItemView> onSellButtonClick;
 
         void Awake()
         {
@@ -46,7 +45,7 @@ namespace Assets.UI
 
         public void OnButtonClick()
         {
-            SellButtonClick?.Invoke(_item, this);
+            onSellButtonClick?.Invoke(_item, this);
         }
 
         public void SetSuccessOfPurchase() 

@@ -4,6 +4,7 @@ using Zenject;
 using Assets.Guns;
 using UnityEngine.InputSystem;
 using Assets.Items;
+using UnityEngine.Animations.Rigging;
 
 namespace Assets.Player
 {
@@ -12,6 +13,7 @@ namespace Assets.Player
         [Header("Weapon setting")]
         [SerializeField] private Transform _aimingPoint;
         [SerializeField] private float _aimingDistance;
+        [SerializeField] private RigLayer _aimRig;
         [Header("Weapon effects")]
         [SerializeField] private ParticleSystem _muzzleFlash;
         [SerializeField] private SpawnerBullet _bulletSpawner;
@@ -20,7 +22,7 @@ namespace Assets.Player
         [Header("Shot setting")]
         [SerializeField] private Animator _gunAnimator;
         [SerializeField] private GameObject _weaponContainer;
-        [SerializeField] private Transform _drawRayForAim;
+        [SerializeField] private Transform _aim;
         [Space(10)]
         [SerializeField] private Weapon[] _weaponSlots;
 
@@ -30,8 +32,8 @@ namespace Assets.Player
 
         private InputSystem _inputSystem;
         private InputAction _inputActionShoot;
-        private GameEventsServise _gameEvents;
-        private readonly float _removeWeaponsThroughTime = 1f;
+        private GlobalEventsSystem _gameEvents;
+        private readonly float _removeWeaponsThroughTime = 1.5f;
         private float _tmpRateOfFireGun;
         private float _counterTime;
         private PlayerData _playerData;
@@ -39,11 +41,11 @@ namespace Assets.Player
         private string _tagTwoPlayer = "Pl2";
 
         [Inject]
-        private void Construct(GameEventsServise gameEvents)
+        private void Construct(GlobalEventsSystem gameEvents)
         {
             _gameEvents = gameEvents;
 
-            _gameEvents.DisablePlayerMovement.AddListener(DisablePlayerMovement);
+            _gameEvents.onDisablePlayerMovement.AddListener(DisableMovement);
         }
 
         private void Awake()
@@ -65,6 +67,11 @@ namespace Assets.Player
         private void OnEnable() => _inputActionShoot.performed += Shoot;
 
         private void OnDisable() => _inputActionShoot.performed -= Shoot;
+
+        private void Update()
+        {
+            TryOffAiming();
+        }
 
         public void ChangeWeapon(int index)
         {
@@ -91,7 +98,7 @@ namespace Assets.Player
 
             if (transform.CompareTag(_tagTwoPlayer))
             {
-                _tagTwoPlayer = "Pl2"; 
+                _tagTwoPlayer = "Pl1"; 
 
                 _inputActionShoot = _inputSystem.PlayerTwo.Shoot; 
             }
@@ -105,7 +112,7 @@ namespace Assets.Player
             }
         }
 
-        private void DisablePlayerMovement(bool isDisable)
+        private void DisableMovement(bool isDisable)
         {
             if (isDisable)
                 _inputSystem?.Disable();
@@ -115,8 +122,6 @@ namespace Assets.Player
 
         private void Shoot(InputAction.CallbackContext callbackContext)
         {
-            _counterTime += Time.fixedDeltaTime;
-
             //Debug.DrawRay(_drawRayForAim.transform.position, -transform.forward * 4, Color.red);
 
             if (Time.time > _tmpRateOfFireGun && _weaponContainer.activeInHierarchy)
@@ -125,15 +130,36 @@ namespace Assets.Player
                 _counterTime = 0f;
                 _gunAnimator.SetBool("WeaponAim", true);
 
+                StartCoroutine(ActivateAim());
                 StartCoroutine(ShootOnTarget());
             }
-            else if (_counterTime >= _removeWeaponsThroughTime)
-                _gunAnimator.SetBool("WeaponAim", false);
         }
 
-        IEnumerator ShootOnTarget()
+        private IEnumerator ActivateAim()
         {
-            float shotRadius = 80f;
+            float weight = _aimRig.rig.weight;
+            for (float i = weight; i < 1; i += 0.1f)
+            {
+                _aimRig.rig.weight = i;
+                
+                yield return null;
+            }
+        }
+
+        private IEnumerator DeactivateAim()
+        {
+            float weight = _aimRig.rig.weight;
+            for (float i = weight; i > 0; i -= 0.1f)
+            {
+                _aimRig.rig.weight = i;
+
+                yield return null;
+            }
+        }
+
+        private IEnumerator ShootOnTarget()
+        {
+            float shotRadius = 60f;
 
             //_audioSource.PlayOneShot(_shotSFX);
 
@@ -155,8 +181,10 @@ namespace Assets.Player
                 beamDirection = Quaternion.Euler(0, deg, 0) * transform.forward;
                 beamHit = LaunchBeam(beamDirection);
 
-                if (beamHit.point != Vector3.zero && beamHit.transform.CompareTag(_tagTwoPlayer))
-                    transform.rotation = Quaternion.LookRotation(beamDirection);
+                if (beamHit.point != Vector3.zero && beamHit.transform.TryGetComponent(out PlayerData player))
+                {
+                    _aim.position = beamHit.point;
+                }
             }
         }
 
@@ -164,6 +192,17 @@ namespace Assets.Player
         {
             Physics.Raycast(_aimingPoint.position, -beamDirection, out RaycastHit hit, _aimingDistance);
             return hit;
+        }
+
+        private void TryOffAiming()
+        {
+            _counterTime += Time.deltaTime;
+            if (_counterTime >= _removeWeaponsThroughTime)
+            {
+                _aim.localPosition = new Vector3(0, 2.75f, 5);
+                StartCoroutine(DeactivateAim());
+                _gunAnimator.SetBool("WeaponAim", false);
+            }
         }
     }
 }
