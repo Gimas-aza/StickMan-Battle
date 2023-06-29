@@ -17,8 +17,6 @@ namespace Assets.Player
         [Header("Weapon effects")]
         [SerializeField] private ParticleSystem _muzzleFlash;
         [SerializeField] private SpawnerBullet _bulletSpawner;
-        [SerializeField] private AudioClip _shotSFX;
-        [SerializeField] private AudioSource _audioSource;
         [Header("Shot setting")]
         [SerializeField] private Animator _gunAnimator;
         [SerializeField] private GameObject _weaponContainer;
@@ -26,10 +24,10 @@ namespace Assets.Player
         [Space(10)]
         [SerializeField] private Weapon[] _weaponSlots;
 
+        private int _starterWeaponIndex = 0;
         private int _previousSlotIndex = -1;
         private float _rateOfFireWeapon;
         private float _damageWeapon;
-
         private InputSystem _inputSystem;
         private InputAction _inputActionShoot;
         private GlobalEventsSystem _gameEvents;
@@ -61,7 +59,7 @@ namespace Assets.Player
         private void Start()
         {
             IdentifyWeapons();
-            ChangeWeapon(0);          
+            ChangeWeapon(_starterWeaponIndex);          
         }
 
         private void OnEnable() => _inputActionShoot.performed += Shoot;
@@ -71,25 +69,6 @@ namespace Assets.Player
         private void Update()
         {
             TryOffAiming();
-        }
-
-        public void ChangeWeapon(int index)
-        {
-            _damageWeapon = _weaponSlots[index].WeaponFeatures.Damage;
-            _rateOfFireWeapon = _weaponSlots[index].WeaponFeatures.RateOfFire;
-
-            _weaponSlots[index].GunModel.SetActive(true);
-            _gunAnimator.SetInteger("IndexWeapon", index);
-
-            DeactivatePreviousWeapon(index);
-        }
-
-        private void DeactivatePreviousWeapon(int index)
-        {
-            if (_previousSlotIndex != -1)
-                _weaponSlots[_previousSlotIndex].GunModel.SetActive(false);
-
-            _previousSlotIndex = index;
         }
 
         private void IdentifyPlayer()
@@ -112,6 +91,25 @@ namespace Assets.Player
             }
         }
 
+        public void ChangeWeapon(int index)
+        {
+            _damageWeapon = _weaponSlots[index].WeaponFeatures.Damage;
+            _rateOfFireWeapon = _weaponSlots[index].WeaponFeatures.RateOfFire;
+
+            _weaponSlots[index].GunModel.SetActive(true);
+            _gunAnimator.SetInteger("IndexWeapon", index);
+
+            DeactivatePreviousWeapon(index);
+        }
+
+        private void DeactivatePreviousWeapon(int index)
+        {
+            if (_previousSlotIndex != -1)
+                _weaponSlots[_previousSlotIndex].GunModel.SetActive(false);
+
+            _previousSlotIndex = index;
+        }
+
         private void DisableMovement(bool isDisable)
         {
             if (isDisable)
@@ -122,8 +120,6 @@ namespace Assets.Player
 
         private void Shoot(InputAction.CallbackContext callbackContext)
         {
-            //Debug.DrawRay(_drawRayForAim.transform.position, -transform.forward * 4, Color.red);
-
             if (Time.time > _tmpRateOfFireGun && _weaponContainer.activeInHierarchy)
             {
                 _tmpRateOfFireGun = Time.time + 1f / _rateOfFireWeapon;
@@ -146,22 +142,9 @@ namespace Assets.Player
             }
         }
 
-        private IEnumerator DeactivateAim()
-        {
-            float weight = _aimRig.rig.weight;
-            for (float i = weight; i > 0; i -= 0.1f)
-            {
-                _aimRig.rig.weight = i;
-
-                yield return null;
-            }
-        }
-
         private IEnumerator ShootOnTarget()
         {
             float shotRadius = 60f;
-
-            //_audioSource.PlayOneShot(_shotSFX);
 
             LaunchBeamsInRadius(shotRadius);
 
@@ -202,6 +185,17 @@ namespace Assets.Player
                 _aim.localPosition = new Vector3(0, 2.75f, 5);
                 StartCoroutine(DeactivateAim());
                 _gunAnimator.SetBool("WeaponAim", false);
+            }
+        }
+
+        private IEnumerator DeactivateAim()
+        {
+            float weight = _aimRig.rig.weight;
+            for (float i = weight; i > 0; i -= 0.1f)
+            {
+                _aimRig.rig.weight = i;
+
+                yield return null;
             }
         }
     }

@@ -15,6 +15,6 @@ namespace Assets.Items
         public virtual int Price => _price;
         public virtual Sprite Icon => _icon;
         
-        public abstract void GiveItemPlayer(PlayerData player);
+        public abstract void GiveItemPlayer(PlayerLogic player);
     }
 }

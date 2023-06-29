@@ -16,9 +16,9 @@ namespace Assets.Items
         public override int Price => _price;
         public override Sprite Icon => _icon;
 
-        public override void GiveItemPlayer(PlayerData player)
+        public override void GiveItemPlayer(PlayerLogic player)
         {
-            player.IncreaseMaxHealth(_effect);
+            player.onIncreaseHealth?.Invoke(_effect);
         }
     }
 }

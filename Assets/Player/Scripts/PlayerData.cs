@@ -27,7 +27,7 @@ namespace Assets.Player
 
         public void WithdrawMoney(int price)
         {
-            _countMoney -= price;
+            _countMoney += price;
         }
 
         public void UpdateStatistic(int money)

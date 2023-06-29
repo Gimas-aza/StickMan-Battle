@@ -9,7 +9,7 @@ namespace Assets
     public class Shop : MonoBehaviour
     {
         [SerializeField] private List<Item> _itemList;
-        [SerializeField] private PlayerData _playerData;
+        [SerializeField] private PlayerLogic _player;
         [SerializeField] private ItemView _template;
         [SerializeField] private bool _inverseItems = false;
         [SerializeField] private GameObject _itemContainer;
@@ -38,22 +38,22 @@ namespace Assets
             view.Render(item, _inverseItems);
             view.SetLocationItemView(changePosition);
         }
+        
+        private void TrySellItem(Item item, ItemView view)
+        {
+            if (_player.CountMoney >= item.Price)
+            {
+                _player.onUpdateMoney?.Invoke(-item.Price);
+                view.SetSuccessOfPurchase();
+                item.GiveItemPlayer(_player);
+
+                view.onSellButtonClick -= SellButtonClick;
+            }
+        }
 
         private void SellButtonClick(Item item, ItemView view)
         {
             TrySellItem(item, view);
-        }
-        
-        private void TrySellItem(Item item, ItemView view)
-        {
-            if (_playerData.CountMoney >= item.Price)
-            {
-                _playerData.WithdrawMoney(item.Price);
-                view.SetSuccessOfPurchase();
-                item.GiveItemPlayer(_playerData);
-
-                view.onSellButtonClick -= SellButtonClick;
-            }
         }
 
         private Vector3 GetChangePositionItemView(ItemView view, int index)

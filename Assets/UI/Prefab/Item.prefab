@@ -523,8 +523,8 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls:
         - m_Target: {fileID: -2141489576166093880}
-          m_TargetAssemblyTypeName: ItemView, StickWarProject
-          m_MethodName: OnButtonClick
+          m_TargetAssemblyTypeName: Assets.UI.ItemView, StickWarProject
+          m_MethodName: ClickButton
           m_Mode: 1
           m_Arguments:
             m_ObjectArgument: {fileID: 0}

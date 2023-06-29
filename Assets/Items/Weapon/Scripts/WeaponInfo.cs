@@ -20,7 +20,7 @@ namespace Assets.Items
 
         [HideInInspector] public int WeaponSlotIndex;
         
-        public override void GiveItemPlayer(PlayerData player)
+        public override void GiveItemPlayer(PlayerLogic player)
         {
             var weaponControl = player.GetComponent<WeaponControl>();
 

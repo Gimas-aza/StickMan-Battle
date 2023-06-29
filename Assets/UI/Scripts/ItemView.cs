@@ -43,7 +43,7 @@ namespace Assets.UI
             }
         }
 
-        public void OnButtonClick()
+        public void ClickButton()
         {
             onSellButtonClick?.Invoke(_item, this);
         }

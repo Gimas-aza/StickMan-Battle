@@ -18,7 +18,10 @@ namespace Assets.Player
         private int _countMoney;
         private GlobalEventsSystem _gameEvents;
 
+        public int CountMoney => _countMoney;
         public UnityAction onDeath;
+        public UnityAction<int> onUpdateMoney;
+        public UnityAction<int> onIncreaseHealth;
 
         [Inject]
         private void Construct(GlobalEventsSystem gameEvents)
@@ -38,12 +41,16 @@ namespace Assets.Player
         {
             onDeath += IncreaseCashBalance;
             onDeath += UpdateStatistic;
+            onUpdateMoney += WritingOffMoney;
+            onIncreaseHealth += IncreaseHealth;
         }
 
         void OnDisable()
         {
             onDeath -= IncreaseCashBalance;
             onDeath -= UpdateStatistic;
+            onUpdateMoney -= WritingOffMoney;
+            onIncreaseHealth -= IncreaseHealth;
         }
 
         private void Start()
@@ -90,10 +97,27 @@ namespace Assets.Player
             _countMoney += moneyMultiplier * 5;
         }
 
+        private void IncreaseHealth(int increase)
+        {
+            _playerData.IncreaseMaxHealth(increase);
+            _currentPlayerHealth = _playerData.Health;
+
+            _playerUI.UpdateHealthBar(_currentPlayerHealth, _playerData.Health);
+        }
+
         private void UpdateStatistic()
         {
             _playerData.UpdateStatistic(_countMoney);
             _countKill = _playerData.CountKill;
+            _countMoney = _playerData.CountMoney;
+
+            _playerUI.RenderStatisticMenu(_countKill, _countMoney);
+        }
+
+        private void WritingOffMoney(int price)
+        {
+            _playerData.WithdrawMoney(price);
+            _countMoney = _playerData.CountMoney;
 
             _playerUI.RenderStatisticMenu(_countKill, _countMoney);
         }
